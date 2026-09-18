@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aaron Gabayoyo — Compiler Engineer</title>
+<meta name="description" content="Projects in compiler engineering: an MLIR dialect for pattern matching, an MLIR interpreter, a metamorphic fuzzer for concurrent OpenMP programs, and a RISC-V hardware prototyping harness.">
+<meta property="og:title" content="Aaron Gabayoyo — Compiler Engineer">
+<meta property="og:description" content="An MLIR dialect for pattern matching, an MLIR interpreter, a metamorphic fuzzer for concurrent OpenMP programs, and a RISC-V hardware prototyping harness.">
+<meta property="og:type" content="profile">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23276749'/%3E%3Cpath d='M11 9 6 16l5 7M21 9l5 7-5 7' stroke='%23ffffff' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Nunito+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+:root {
+  --font-heading: 'Poppins', ui-rounded, system-ui, -apple-system, sans-serif;
+  --font-body: 'Nunito Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Cool off-white paper with a muted sage accent. */
+  --paper: #fafaf9;
+  --card: #ffffff;
+  --card-hover: #fdfdff;
+  --ink: #1c1e24;
+  --ink-muted: #4a504c;
+  --ink-faint: #5c635e;
+  --accent: #4f7057;
+  --accent-bright: #436148;
+  --accent-deep: #3f6b52;
+  /* Repo titles: deeper than the accent so they hold up on the card's darkest
+     stop, while keeping enough channel spread to still read as green. */
+  --title-green: #2b5440;
+  --title-green-hover: #1f3f2f;
+  --accent-wash: #eef3ee;
+  --accent-edge: #d9e4dc;
+  --rule: #e4e6e3;
+  --rule-soft: #eceeea;
+
+  --size-title: clamp(1.9rem, 4vw, 2.7rem);
+  --size-repo: clamp(1.25rem, 2.05vw, 1.6rem);
+  --size-body: clamp(0.95rem, 1.15vw, 1.02rem);
+  /* Secondary cards run a step down, so the two tiers differ in density. */
+  --size-small: clamp(0.89rem, 1.05vw, 0.95rem);
+  /* Opening prose: a step up in size, and set at weight 600 so the block carries
+     its weight through type rather than through a surface. */
+  --size-lede: clamp(1.05rem, 1.5vw, 1.22rem);
+  --size-meta: clamp(0.79rem, 1vw, 0.86rem);
+  /* The masthead tagline and the contact links share this: a step above the meta
+     scale, since both carry weight in the band rather than annotating it. */
+  --size-label: clamp(0.88rem, 1.1vw, 0.95rem);
+  --size-micro: clamp(0.72rem, 0.9vw, 0.78rem);
+
+  --page: min(92vw, 900px);
+  --bleed: min(94vw, 1180px);
+  --gap-section: clamp(3rem, 6vw, 4.5rem);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--size-body);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { margin: 0; font-family: var(--font-heading); font-weight: 600; line-height: 1.3; letter-spacing: -0.015em; }
+p { margin: 0; }
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: var(--accent-bright); }
+:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 3px; border-radius: 3px; }
+code {
+  font-family: var(--font-mono); font-size: 0.87em;
+  color: var(--accent-deep); background: var(--accent-wash);
+  border-radius: 4px; padding: 0.08em 0.34em;
+}
+/* Off-screen until focused: rendered inline it would sit above the header. */
+.skip {
+  position: absolute; top: 0; left: -9999px; z-index: 300;
+  background: var(--accent); color: #fff;
+  padding: 0.85rem 1.1rem; border-radius: 0 0 8px 0;
+  font-size: var(--size-meta); text-decoration: none;
+}
+.skip:focus { left: 0; }
+
+/* Fade-and-rise on scroll, scoped to .js so the page still reads without
+   scripting. One short transition, no stagger. */
+.js .fade { opacity: 0; transform: translateY(10px); transition: opacity 0.5s var(--ease), transform 0.5s var(--ease); }
+.js .fade.in { opacity: 1; transform: none; }
+
+/* Backdrop: layered gradients on the plain paper colour with a faint grain over
+   them. Nothing here is a positioned element or a repeating 1px pattern, so it
+   scales to any viewport without tiling seams or aliasing, and no large layer is
+   promoted to the GPU where it could be truncated. */
+.backdrop {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: -1; pointer-events: none;
+  background-image:
+    linear-gradient(155deg, transparent 4%, rgba(66, 122, 82, 0.085) 30%, transparent 54%),
+    linear-gradient(205deg, transparent 18%, rgba(66, 122, 82, 0.07) 44%, transparent 70%),
+    linear-gradient(25deg, transparent 44%, rgba(66, 122, 82, 0.06) 72%, transparent 94%);
+}
+/* A very slow drift, so the wash is alive without moving with the scroll. */
+@media (prefers-reduced-motion: no-preference) {
+  .backdrop {
+    animation: drift 50s ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    from { background-position: 0% 0%, 100% 0%, 50% 100%; }
+    to   { background-position: 0% 26%, 100% 30%, 50% 68%; }
+  }
+}
+/* Grain dithers the wash, which would otherwise band in 8-bit colour. */
+.backdrop::after {
+  content: ''; position: absolute; inset: 0; opacity: 0.022; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── header ─────────────────────────────────────────────── */
+/* Full-bleed white panel so the top of the page has weight and the
+   repository list below stays the thing you read. */
+.masthead {
+  background:
+    radial-gradient(70rem 22rem at 50% 0%, rgba(79, 112, 87, 0.07), transparent 70%),
+    linear-gradient(180deg, #ffffff 0%, #f1f6f2 100%);
+  /* Symmetric, and larger than the original band needed because trimming the
+     line boxes removed the leading that used to pad the top and bottom. */
+  padding: clamp(3.75rem, 4.6vw, 3.95rem) 0;
+  margin-bottom: var(--gap-section);
+  box-shadow: 0 10px 22px -20px rgba(79, 112, 87, 0.45);
+  /* A 2px rule carrying a gradient, rather than an inset shadow or a blurred
+     drop shadow, both of which read as a smudge under the header. */
+  border-bottom: 2px solid var(--accent-edge);
+  border-image: linear-gradient(90deg,
+    var(--accent-edge) 0%,
+    rgba(79, 112, 87, 0.5) 30%,
+    var(--accent-edge) 100%) 1;
+}
+/* Centring distributes space around a line box, not around the glyphs in it, so
+   the leading built into each line height would leave the name sitting lower
+   than the band's padding implies. Trimming the boxes to their cap and baseline
+   makes the centring measure the visible text, with no compensating offset. */
+.masthead h1, .tagline, .intro {
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+}
+/* Identity on the left, contact on the right: a strip rather than a hero, so the
+   band carries the name spanning most of its width instead of a sparse column. */
+.masthead-inner {
+  width: var(--bleed); margin: 0 auto;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(1.6rem, 4vw, 3.4rem); align-items: center;
+}
+/* The name and the line under it read as one block, so they share a column and
+   are spaced by `gap` rather than by a margin. */
+.masthead-ident {
+  min-width: 0; display: flex; flex-direction: column;
+  align-items: flex-start; justify-content: center; gap: 0.8rem;
+}
+/* Contact sits as a row opposite the name. */
+.masthead-contact {
+  display: flex; flex-direction: row; align-items: center;
+  gap: 0.2rem 1.4rem; justify-content: flex-end;
+}
+.masthead h1 {
+  font-size: var(--size-title); font-weight: 600;
+  letter-spacing: -0.028em;
+}
+/* What the name is, under it rather than inside a heading. */
+.tagline {
+  margin: 0; color: var(--accent); font-weight: 500;
+  font-size: var(--size-label); letter-spacing: 0.01em;
+}
+/* ── intro ──────────────────────────────────────────────── */
+/* The prose sits in the page column rather than the masthead, so it reads at the
+   full measure instead of being squeezed into half of the band. Availability is a
+   line of the same paragraph, so the two cannot drift apart at any width; the
+   distance to the next section is carried on the bottom edge.
+
+   No surface or rule: the block earns its weight from type alone, at a heavier
+   body weight and a step up in size rather than from decoration around it. */
+.intro {
+  /* Wide enough that the closing word of the first block is not left alone on a
+     line of its own; narrower measures strand it at every viewport tested. */
+  margin: 0 auto clamp(3rem, 6vw, 4.5rem); max-width: 52rem;
+  text-align: center; color: var(--ink);
+  font-size: var(--size-lede); font-weight: 600; line-height: 1.6;
+}
+
+/* ── page column ────────────────────────────────────────── */
+.page { width: var(--page); margin: 0 auto; padding-bottom: clamp(2rem, 6vw, 4rem); }
+
+/* ── socials ────────────────────────────────────────────── */
+/* The links sit in a row opposite the name, so the row is tightened rather than
+   spaced off a line above it. */
+.socials { margin: 0; }
+
+/* The two contact links. */
+.socials-links {
+  display: flex; flex-direction: column; align-items: flex-start;
+  margin: -0.45rem 0 -0.45rem -0.45rem;
+}
+.socials-links a {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  align-self: flex-start; max-width: 100%;
+  font-family: var(--font-body); font-size: var(--size-label);
+  color: var(--accent-deep);
+  /* Padding is in px, not rem: the font size shrinks with clamp() on narrow
+     screens, so rem padding would shrink with it and the touch target would drop
+     below 44px. The narrow-width override below raises it further. */
+  line-height: 1.5;
+  padding: 5px 0;
+  text-decoration: underline;
+  text-decoration-color: var(--accent-edge);
+  text-decoration-style: dashed;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: color 0.2s var(--ease), text-decoration-color 0.2s var(--ease),
+              text-decoration-style 0.2s var(--ease);
+}
+/* Colour only — no fill, no box. */
+.socials-links a:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+  text-decoration-style: solid;
+}
+.socials-links svg { transition: color 0.2s var(--ease); }
+.socials-links svg { width: 14px; height: 14px; flex: none; color: var(--accent); }
+
+/* ── section heading ────────────────────────────────────── */
+.section-head {
+  display: flex; align-items: center; gap: 0.85rem;
+  font-family: var(--font-heading); font-size: clamp(1.4rem, 2.35vw, 1.9rem);
+  text-transform: none; letter-spacing: -0.015em; color: var(--accent);
+  font-weight: 600; padding-bottom: 1.2rem;
+}
+.section-head > span::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+  border-radius: 2px; background: var(--accent);
+}
+.section-head::after {
+  content: ''; flex: 1; height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg,
+    rgba(79, 112, 87, 0.55) 0%,
+    rgba(79, 112, 87, 0.38) 22%,
+    rgba(79, 112, 87, 0.20) 50%,
+    rgba(79, 112, 87, 0.07) 78%,
+    transparent 100%);
+}
+.section-head.spaced { padding-top: var(--gap-section); }
+/* The first section sits close under the masthead, which already carries the
+   page's opening weight. */
+.section-head.lead { padding-bottom: 0.9rem; }
+
+/* ── cards ──────────────────────────────────────────────── */
+.card {
+  position: relative; overflow: hidden;
+  --card-pad: clamp(1.45rem, 3.2vw, 2.05rem);
+  --card-edge: 4px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: var(--card-pad) var(--card-pad) var(--card-pad) calc(var(--card-pad) + var(--card-edge));
+  margin-bottom: 1.15rem;
+  transition: border-color 0.25s var(--ease), background 0.25s var(--ease),
+              box-shadow 0.25s var(--ease), transform 0.25s var(--ease);
+}
+/* The secondary entries sit a rank below the main ones. The difference is density
+   and a flat fill, not a different shape — borders, radius and the accent bar stay
+   the same so the two tiers still read as one list. */
+.card.is-secondary {
+  --card-pad: clamp(1.15rem, 2.4vw, 1.5rem);
+  background: var(--card);
+}
+/* These cards keep the rule between heading and description, since their single
+   paragraph has no summary to divide. It is the same title/content split the main
+   cards had before their summaries took over that job. The space under it matches
+   the main cards' rule, so the two sections separate alike. */
+.card.is-secondary h3 {
+  font-size: clamp(1.1rem, 1.62vw, 1.32rem);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.8rem;
+  transition: border-color 0.25s var(--ease);
+}
+.card.is-secondary:hover h3,
+.card.is-secondary:focus-within h3 { border-bottom-color: var(--accent-edge); }
+.card.is-secondary p { font-size: var(--size-small); }
+/* The description's own top margin is zeroed generally, which would leave the
+   text sitting on the rule; this restores the space under it. */
+.card.is-secondary h3 + p { margin-top: 0.9rem; }
+.card.is-secondary p + p { margin-top: 0.6rem; }
+
+/* A flat accent bar down the left edge — always present, so it also serves as
+   the card's only colour and as a visual index for the list. Hover or focus
+   saturates it and stretches it to the full height. */
+.card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: var(--card-edge);
+  background: var(--accent-edge);
+  transform: scaleY(0.7); transform-origin: 50% 50%;
+  transition: transform 0.3s var(--ease), background 0.25s var(--ease);
+}
+.card:hover::before, .card:focus-within::before {
+  transform: scaleY(1); background: var(--accent);
+}
+
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(26, 31, 28, 0.035), 0 18px 40px -24px rgba(79, 112, 87, 0.45);
+}
+.card:focus-within { border-color: var(--accent-edge); }
+.card h3 {
+  font-size: var(--size-repo); font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.card h3 a {
+  color: var(--title-green);
+  /* No underline: the accent bar, the lift and the colour change already signal
+     that the whole card is the link. */
+  text-decoration: none;
+  transition: color 0.2s var(--ease);
+}
+.card h3 a::after { content: ''; position: absolute; inset: 0; } /* the whole card is the link target */
+.card:hover h3 a,
+.card:focus-within h3 a { color: var(--title-green-hover); }
+.card p { color: var(--ink-muted); }
+.card p + p { margin-top: 0.75rem; }
+/* Summary and detail share the card, split by a hairline: the lead sentence ends
+   the scannable tier, and everything below it is the depth for a reader who has
+   already decided the project is interesting. The rule is lighter than the one
+   under the heading, so the card ranks its own three tiers without any of them
+   reading as a card border. */
+/* Summary and detail share the card, split by a single rule: the title carries no
+   rule of its own, so this is the card's only internal line and marks the one
+   boundary that matters. The rule gets equal space above and below it, or it reads
+   as belonging to the summary it sits under. It bleeds to the card's edges so it
+   reads as a divider rather than as underlining, and runs a shade darker than the
+   card border. */
+.card-summary {
+  color: var(--ink); font-size: var(--size-body); font-weight: 600;
+  line-height: 1.5; margin: 0.6rem 0 0.95rem;
+}
+.card-details {
+  margin-top: 0.95rem; padding-top: 0.95rem;
+  border-top: 1.5px solid var(--rule);
+  margin-inline: calc(-1 * var(--card-pad));
+  padding-inline: var(--card-pad);
+}
+.card-details + .card-details { border-top: 0; padding-top: 0; }
+.card p + .card-details { margin-top: 0.95rem; }
+
+.wip {
+  display: inline-block; margin-left: 0.6rem; vertical-align: 0.12em;
+  font-family: var(--font-body); font-size: var(--size-micro); font-weight: 500;
+  color: var(--accent-deep); background: none;
+  border: 1px dashed var(--accent-edge); border-radius: 6px;
+  padding: 0.12rem 0.5rem; white-space: nowrap;
+  pointer-events: none; /* status only; clicks fall through to the card link */
+}
+
+/* On wide viewports the entries pair up, which halves the page and uses the
+   margin the single column left empty. Below this the column would be too narrow
+   to read, so it stays single. `1fr` on the rows keeps cards in a row equal
+   height, so the accent bars line up rather than stepping. */
+@media (min-width: 1280px) {
+  .page { width: min(94vw, 1180px); }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    gap: 1.25rem;
+  }
+  .card-grid .card { margin-bottom: 0; height: 100%; }
+}
+
+/* ── footer ─────────────────────────────────────────────── */
+/* A deep sage close, so the page ends deliberately instead of trailing off after
+   the last card. Sits outside .page so it runs full width. */
+.footer {
+  position: relative;
+  background: var(--title-green);
+  padding: clamp(1.6rem, 3vw, 2.2rem) 0 clamp(1.5rem, 2.8vw, 2rem);
+}
+/* Flat dot pattern and grain — overlays, not gradients. */
+.footer::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.10) 1px, transparent 1.1px);
+  background-size: 22px 22px;
+}
+.footer::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  opacity: 0.05; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* One centred row: name, then contact links and back-to-top, split by hairline
+   dividers. `::before` supplies the divider only from the second item on, so the
+   row never opens with a stray rule. */
+.footer-bar {
+  position: relative; z-index: 1;
+  width: var(--page); margin: 0 auto;
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem;
+  justify-content: center; align-items: center;
+  font-size: var(--size-micro); color: #c9dccf;
+}
+/* Each divider rides with the item it precedes. */
+.footer-bar > * + *::before {
+  content: ''; display: inline-block; vertical-align: middle;
+  width: 1px; height: 0.7em; margin-right: 1.4rem;
+  background: rgba(255, 255, 255, 0.22);
+}
+.footer-bar a { color: #c9dccf; text-decoration: none; transition: color 0.2s var(--ease); }
+.footer-bar a:hover { color: #ffffff; text-decoration: underline; text-underline-offset: 3px; }
+
+/* Fade-and-rise on scroll, scoped to .js so the page still reads without
+   scripting. One short transition, no stagger. */
+.js .fade { opacity: 0; transform: translateY(10px); transition: opacity 0.5s var(--ease), transform 0.5s var(--ease); }
+.js .fade.in { opacity: 1; transform: none; }
+
+@media (max-width: 900px) {
+  .masthead-inner { grid-template-columns: 1fr; gap: 1.25rem; }
+  .masthead { padding: clamp(2.2rem, 8vw, 3.4rem) 0; }
+  /* Stacked, the contact row drops under the name and aligns to the same left
+     edge as the text above it. */
+  .masthead-contact { justify-content: flex-start; }
+}
+/* Touch targets need ~44px, which necessarily puts two short links about a line
+   apart. On a pointer device that reads as too much space, so the padding grows
+   only on the narrow, touch-leaning widths. */
+@media (max-width: 900px) {
+  .socials-links a { padding: 13px 0; }
+}
+
+@media (max-width: 620px) {
+  .wip { display: block; margin: 0.5rem 0 0; width: fit-content; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .fade { opacity: 1; transform: none; transition: none; }
+  .card, .card::before { transition: none; }
+  .card::before { transform: scaleY(1); }
+  .card:hover { transform: none; }
+}
+
+@media print {
+  .skip, .contact, .footer, .backdrop { display: none; }
+  body { background: #fff; color: #000; }
+  .masthead { border-bottom: 1px solid #ccc; }
+  .card, .masthead { break-inside: avoid; box-shadow: none; }
+  .js .fade { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#projects">Skip to projects</a>
+<div class="backdrop" aria-hidden="true">
+</div>
+
+<header class="masthead fade">
+  <div class="masthead-inner">
+    <div class="masthead-ident">
+      <h1>Aaron Gabayoyo</h1>
+      <p class="tagline">Compiler engineer</p>
+    </div>
+    <div class="masthead-contact">
+      <div class="socials">
+        <div class="socials-links">
+          <a href="https://github.com/Gabayoyo">
+            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.93-.89-1.18-.89-1.18-.73-.5.05-.49.05-.49.81.06 1.23.83 1.23.83.72 1.23 1.88.87 2.34.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+            GitHub
+          </a>
+          <a href="mailto:aarongaba05@gmail.com">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="m2 4.5 6 4 6-4"/></svg>
+            Email
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+  <p class="intro">
+    Penultimate-year student at the University of Edinburgh. I am most interested in compilers, particularly 
+    in the middle-end, IR and optimisations within the LLVM and MLIR ecosystems.
+    I also enjoy interpretation, hardware synthesis/FPGAs, and robotics.<br><br>
+    Looking for graduate and internship roles in compiler engineering — always happy to talk compilers, or any of the topics above.
+  </p>
+
+  <h2 class="section-head" id="projects">Projects</h2>
+
+  <div class="card-grid">
+  <article class="card fade">
+    <h3><a href="https://github.com/Gabayoyo/mlir-match">mlir-match</a></h3>
+    <p class="card-summary">
+      An out-of-tree MLIR dialect for pattern matching optimisations.
+    </p>
+    <p class="card-details">
+      mlir-match provides a pattern-matching dialect capable of representing functional
+      pattern matching as operations in MLIR, allowing for potential match-specific optimisations
+      to be performed. The repo showcases this potential through the application of Maranget's 
+      Algorithm, reducing the number of comparisons each match has to perform in order to pick the right case.
+    </p>
+  </article>
+
+  <article class="card fade">
+    <h3><a href="https://github.com/dakaidan/MLIR-MRacle">mlir-mracle</a></h3>
+    <p class="card-summary">
+      A metamorphic testing harness for OpenMP concurrency in MLIR.
+    </p>
+    <p class="card-details">
+      Developed as part of the MLsystems Research Internship, mlir-mracle is a metamorphic testing 
+      framework for MLIR's OpenMP dialect. By fuzzing OpenMP programs and applying metamorphic relations, 
+      it aims to detect concurrency bugs in the MLIR compiler. So far, one verification bug has been found
+      and fixed in MLIR's OpenMP dialect, thanks to mlir-mracle.
+    </p>
+  </article>
+
+  <article class="card fade">
+    <h3><a href="https://github.com/edin-dal/scair/tree/aaron/ssacfg-changes/interpreter">ScaIR IR Interpreter</a></h3>
+    <p class="card-summary">
+      An extensible MLIR-SSA interpreter developed within ScaIR.
+    </p>
+    <p class="card-details">
+      The interpreter handles all aspects of interpretation automatically, abstracting away
+      the complexity of implementation and allowing for the easy addition of operation and dialect
+      interpretation logic for developers. Achieves 12-18x speedup for large programs over 
+      xDSL's existing interpreter infrastructure.
+    </p>
+  </article>
+
+  <article class="card fade">
+    <h3><a href="https://github.com/Gabayoyo/RISC-E">RISC-E</a></h3>
+    <p class="card-summary">
+      A simulated cost harness for prototyping RISC-V hardware.
+    </p>
+    <p class="card-details">
+      RISC-E provides an interface for defining and simulating RISC-V hardware components in C++.
+      Through the RISC-V ELF interpreter, the harness can then compares multiple implementations of
+      the same component, in terms of simulated performance metrics such as CPI and cycles saved.
+    </p>
+  </article>
+  <article class="card fade">
+    <h3>
+      <a href="https://github.com/Gabayoyo/BiggerBrotherWebApp">BiggerBrother</a>
+      <span class="wip">In progress</span>
+    </h3>
+    <p class="card-summary">
+      A computer vision tool for gym training.
+    </p>
+    <p class="card-details">
+      Provides computer vision analysis of a recorded weightlifting set, returning metrics
+      such as per-rep velocity, range of motion and rep timings. Also features the first ever
+      proximity to failure estimator software. Features CI pipeline with mypy, pytest 
+      (100+ tests) and ruff linting. Hosted website WIP.
+    </p>
+  </article>
+  </div>
+
+
+  <h2 class="section-head spaced">Other repositories</h2>
+
+  <div class="card-grid">
+  <article class="card fade is-secondary">
+    <h3>
+      <a href="https://github.com/Gabayoyo/riscv-pipeline-simulator">Riscv Pipeline Simulator</a>
+      <span class="wip">In progress</span>
+    </h3>
+    <p>
+      A cycle-accurate RISC-V pipeline simulator, fetch through write-back, with
+      pipeline registers, forwarding and hazard handling modelled explicitly.
+    </p>
+  </article>
+
+
+  <article class="card fade is-secondary">
+    <h3><a href="https://github.com/Gabayoyo/MiniatureElevator">Miniature Elevator</a></h3>
+    <p>
+      A 3-D printed mechanised miniature elevator that uses the SCAN algorithm for scheduling.
+      Utilises an Arduino Uno and servo motor with a pulley system for the lifting functionality.
+    </p>
+  </article>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <div class="footer-bar">
+    <span>© <span id="year">2026</span> Aaron Gabayoyo</span>
+    <a href="https://github.com/Gabayoyo">GitHub</a>
+    <a href="mailto:aarongaba05@gmail.com">Email</a>
+    <a href="#top">Back to top</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fades = Array.prototype.slice.call(document.querySelectorAll('.fade'));
+
+
+  function show(el) { el.classList.add('in'); }
+
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    fades.forEach(show);
+  } else {
+    var pending = fades.slice();
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        show(entry.target);
+        observer.unobserve(entry.target);
+        var at = pending.indexOf(entry.target);
+        if (at !== -1) pending.splice(at, 1);
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+
+    fades.forEach(function (el) { observer.observe(el); });
+
+    // An anchor jump or a fast scroll can carry elements past the viewport
+    // without their intersecting it, leaving them hidden; reveal those.
+    function revealSkipped() {
+      if (!pending.length) return;
+      pending = pending.filter(function (el) {
+        if (el.getBoundingClientRect().bottom < window.innerHeight) {
+          observer.unobserve(el);
+          show(el);
+          return false;
+        }
+        return true;
+      });
+    }
+
+    window.addEventListener('scroll', revealSkipped, { passive: true });
+    window.addEventListener('resize', revealSkipped, { passive: true });
+  }
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
