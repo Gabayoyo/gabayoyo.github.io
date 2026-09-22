@@ -278,22 +278,14 @@ code {
   --card-pad: clamp(1.15rem, 2.4vw, 1.5rem);
   background: var(--card);
 }
-/* These cards keep the rule between heading and description, since their single
-   paragraph has no summary to divide. It is the same title/content split the main
-   cards had before their summaries took over that job. The space under it matches
-   the main cards' rule, so the two sections separate alike. */
+/* The short cards carry no rule between their heading and the description: one
+   line of text does not need dividing from another. The spacing below the
+   heading keeps the two apart instead. */
 .card.is-secondary h3 {
   font-size: clamp(1.1rem, 1.62vw, 1.32rem);
-  border-bottom: 1px solid var(--rule);
-  padding-bottom: 0.8rem;
-  transition: border-color 0.25s var(--ease);
+  margin-bottom: 0.45rem;
 }
-.card.is-secondary:hover h3,
-.card.is-secondary:focus-within h3 { border-bottom-color: var(--accent-edge); }
 .card.is-secondary p { font-size: var(--size-small); }
-/* The description's own top margin is zeroed generally, which would leave the
-   text sitting on the rule; this restores the space under it. */
-.card.is-secondary h3 + p { margin-top: 0.9rem; }
 .card.is-secondary p + p { margin-top: 0.6rem; }
 
 /* A flat accent bar down the left edge — always present, so it also serves as
@@ -368,7 +360,7 @@ code {
 /* On wide viewports the entries pair up, which halves the page and uses the
    margin the single column left empty. Below this the column would be too narrow
    to read, so it stays single. `1fr` on the rows keeps cards in a row equal
-   height, so the accent bars line up rather than stepping. */
+   height, so their dividers line up rather than stepping. */
 @media (min-width: 1280px) {
   .page { width: min(94vw, 1180px); }
   .card-grid {
@@ -378,17 +370,6 @@ code {
     gap: 1.25rem;
   }
   .card-grid .card { margin-bottom: 0; height: 100%; }
-  .card-grid.is-featured { grid-template-columns: minmax(0, 1fr); }
-  /* A featured card spans the full column, so its detail would run to roughly
-     twice the line length of the cards below. It flows through two columns
-     instead, which restores approximately the measure used everywhere else.
-     Below this width every card is already a single full-width column, so the
-     featured card needs no special treatment there. */
-  .is-featured .card-details {
-    border-top: 0; padding-top: 0;
-    margin-inline: 0; padding-inline: 0;
-    column-count: 2; column-gap: clamp(2rem, 3.5vw, 3.2rem);
-  }
 }
 
 /* ── footer ─────────────────────────────────────────────── */
@@ -505,7 +486,9 @@ code {
     Looking for graduate and internship roles in compiler engineering — always happy to talk compilers, or any of the topics above.
   </p>
 
-  <div class="card-grid is-featured">
+  <h2 class="section-head" id="projects">Main projects</h2>
+
+  <div class="card-grid">
   <article class="card fade">
     <h3><a href="https://github.com/Gabayoyo/mlir-match">mlir-match</a></h3>
     <p class="card-summary">
@@ -533,10 +516,10 @@ code {
   </article>
   </div>
 
-  <h2 class="section-head spaced" id="projects">Other projects</h2>
+  <h2 class="section-head spaced">Other projects</h2>
 
   <div class="card-grid">
-  <article class="card fade is-secondary">
+  <article class="card fade">
     <h3><a href="https://github.com/edin-dal/scair/tree/main/interpreter">ScaIR IR Interpreter</a></h3>
     <p class="card-summary">
       An extensible MLIR-SSA interpreter developed within ScaIR.
@@ -549,7 +532,7 @@ code {
     </p>
   </article>
 
-  <article class="card fade is-secondary">
+  <article class="card fade">
     <h3><a href="https://github.com/Gabayoyo/RISC-E">RISC-E</a></h3>
     <p class="card-summary">
       A simulated cost harness for prototyping RISC-V hardware.
@@ -560,7 +543,7 @@ code {
       the same component, in terms of simulated performance metrics such as CPI and cycles saved.
     </p>
   </article>
-  <article class="card fade is-secondary">
+  <article class="card fade">
     <h3>
       <a href="https://github.com/Gabayoyo/BiggerBrotherWebApp">BiggerBrother</a>
       <span class="wip">In progress</span>
@@ -576,6 +559,10 @@ code {
     </p>
   </article>
   </div>
+
+  <h2 class="section-head spaced">Smaller projects</h2>
+
+  <div class="card-grid">
   <article class="card fade is-secondary">
     <h3>
       <a href="https://github.com/Gabayoyo/riscv-pipeline-simulator">Riscv Pipeline Simulator</a>
@@ -596,6 +583,8 @@ code {
     </p>
   </article>
   </div>
+
+</div>
 
 <footer class="footer">
   <div class="footer-bar">
