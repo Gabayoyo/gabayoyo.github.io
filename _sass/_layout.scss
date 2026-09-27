@@ -1,0 +1,29 @@
+/* ==========================================================================
+   Layout
+   The theme's two-column body: a sidebar beside a main column. Below the
+   $large breakpoint the sidebar becomes a block at the top and the content
+   follows it.
+   ========================================================================== */
+
+#main {
+  max-width: $container;
+  margin: 0 auto;
+  padding: 0 1.2rem;
+  display: block;
+
+  @media screen and (min-width: $large) {
+    padding: 0 2rem;
+    display: grid;
+    /* The sidebar is its own column; the main column takes what is left. */
+    grid-template-columns: $sidebar-w minmax(0, 1fr);
+    column-gap: $sidebar-gap;
+    align-items: start;
+  }
+}
+
+.layout--no-sidebar {
+  @media screen and (min-width: $large) {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 46rem;
+  }
+}

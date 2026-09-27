@@ -1,0 +1,186 @@
+/* ==========================================================================
+   Page — the main prose column, the section furniture it uses, and the CV's
+   entry grid. Anything here that only one page needs is scoped to that page.
+   ========================================================================== */
+
+.page {
+  padding: 2.6rem 0 1rem;
+  min-width: 0;
+
+  @media screen and (min-width: $large) {
+    padding-top: 3.2rem;
+  }
+}
+
+.page__inner { max-width: 48rem; }
+
+.page__head { margin-bottom: clamp(1.4rem, 3vw, 2rem); }
+
+/* The name, which is the page's own heading rather than a label repeated
+   beside it. */
+.page__title {
+  font-size: $size-h1;
+  letter-spacing: -0.028em;
+  font-variation-settings: 'opsz' 96;
+}
+
+/* The one-sentence summary, directly under the name. Roman rather than italic:
+   at this size on a serif, italic reads as a quotation or a placeholder rather
+   than as something the page is asserting. It keeps the accent colour, which is
+   where this design's depth comes from. */
+.page__summary {
+  margin-top: 0.45rem;
+  max-width: 40ch;
+  font-size: $size-lede;
+  line-height: 1.38;
+  color: $accent;
+}
+
+/* ── Section furniture ─────────────────────────────────────────────── */
+
+.section {
+  padding-bottom: $band;
+
+  &:last-child { padding-bottom: 1rem; }
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  padding-bottom: 0.9rem;
+  margin-bottom: clamp(1.3rem, 2.6vw, 1.9rem);
+  border-bottom: 1px solid $rule;
+
+  h2 {
+    font-size: $size-h2;
+    letter-spacing: -0.02em;
+  }
+
+  .spacer { flex: 1; }
+
+  /* The right-aligned note only works because this heading spans a wide column.
+     A narrower one drops it, which is why the blog's list head sets its count
+     inline instead of using this. */
+  .aside {
+    flex: none;
+    font-family: $font-body;
+    font-size: $size-meta;
+    color: $ink-faint;
+    text-align: right;
+  }
+}
+
+@media (max-width: $medium-wide) {
+  .section-head {
+    flex-wrap: wrap;
+    .aside { display: none; }
+  }
+}
+
+/* ── Prose ─────────────────────────────────────────────────────────── */
+
+.page__content {
+  p { color: $ink-muted; }
+
+  > p + p { margin-top: 1.1rem; }
+
+  h2 {
+    margin-top: clamp(2rem, 4.5vw, 2.8rem);
+    padding-bottom: 0.45rem;
+    border-bottom: 1px solid $rule-soft;
+    font-size: $size-h2;
+  }
+
+  h3 { margin-top: clamp(1.5rem, 3.5vw, 2rem); font-size: $size-h3; }
+
+  h2 + p, h3 + p, h2 + ul, h3 + ul { margin-top: 0.8rem; }
+
+  ul, ol {
+    margin: 1.1rem 0 1.1rem;
+    padding-left: 1.2rem;
+    color: $ink-muted;
+  }
+
+  li + li { margin-top: 0.5rem; }
+
+  /* Only the bottom half matters when a list ends a section. */
+  > ul:last-child, > ol:last-child { margin-bottom: 0; }
+  li::marker { color: $accent; }
+
+  blockquote {
+    margin: clamp(1.5rem, 3.5vw, 2.1rem) 0;
+    padding-left: 1.2rem;
+    border-left: 2px solid $accent;
+    font-size: $size-lede;
+    font-style: italic;
+    line-height: 1.42;
+    color: $accent-deep;
+
+    cite, footer {
+      display: block;
+      margin-top: 0.6rem;
+      font-family: $font-body;
+      font-size: $size-meta;
+      font-style: normal;
+      color: $ink-faint;
+    }
+  }
+
+  /* A marked, empty slot rather than a silent gap. */
+  .slot {
+    padding: clamp(1.4rem, 3.5vw, 2.2rem);
+    border: 1px dashed $rule;
+    border-radius: $border-radius;
+    background: $surface;
+
+    p {
+      font-family: $font-body;
+      font-size: $size-meta;
+      line-height: 1.9;
+      color: $ink-faint;
+    }
+
+    p + p { margin-top: 0.7rem; }
+    strong { color: $accent; font-weight: 500; }
+  }
+}
+
+
+
+
+
+/* ── Footer strip ──────────────────────────────────────────────────── */
+
+.site-footer {
+  margin-top: $band;
+  border-top: 1px solid $rule;
+}
+
+.site-footer__inner {
+  max-width: $container;
+  margin: 0 auto;
+  padding: 1.4rem 1.2rem 2rem;
+
+  @media screen and (min-width: $large) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.site-footer__note {
+  font-family: $font-body;
+  font-size: $size-meta;
+  letter-spacing: 0.04em;
+  color: $ink-faint;
+
+  a {
+    color: $ink-faint;
+    text-decoration: none;
+    padding: 0.6rem 0;
+
+    &:hover { color: $accent; text-decoration: underline; text-underline-offset: 3px; }
+  }
+}
+
+.site-footer__sep { margin: 0 0.5rem; }

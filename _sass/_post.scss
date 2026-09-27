@@ -1,0 +1,209 @@
+/* ==========================================================================
+   Post — the reading experience for a single article.
+   ========================================================================== */
+
+/* Reading progress: a hairline at the very top, above the masthead. */
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  width: 100%;
+  height: 2px;
+  background: transparent;
+  pointer-events: none;
+
+  span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: $accent;
+    transition: width 0.1s linear;
+  }
+}
+
+.post {
+  padding: 2.6rem 0 1rem;
+  min-width: 0;
+
+  @media screen and (min-width: $large) {
+    padding-top: 3.2rem;
+  }
+}
+
+.post__head {
+  max-width: $measure;
+  margin-bottom: clamp(1.6rem, 3.5vw, 2.4rem);
+}
+
+.post__title {
+  margin-top: 0.8rem;
+  font-size: $size-h1;
+  letter-spacing: -0.028em;
+  font-variation-settings: 'opsz' 90;
+}
+
+.post__lead {
+  margin-top: 0.8rem;
+  font-size: $size-lede;
+  line-height: 1.44;
+  color: $accent;
+}
+
+.post__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 1.1rem;
+  margin-top: clamp(1.2rem, 2.6vw, 1.7rem);
+  padding-top: 1rem;
+  border-top: 1px solid $rule;
+  font-family: $font-body;
+  font-size: $size-meta;
+  letter-spacing: 0.04em;
+  color: $ink-faint;
+}
+
+/* ── Article body ──────────────────────────────────────────────────── */
+
+.post__content {
+  max-width: $measure;
+
+  > * + * { margin-top: 1.1rem; }
+
+  p { color: $ink-muted; }
+
+  /* The opening block carries the reading scale, one step above body text. */
+  > p:first-of-type {
+    font-size: $size-lede;
+    line-height: 1.47;
+    color: $ink;
+  }
+
+  h2 {
+    margin-top: clamp(2rem, 4.5vw, 2.9rem);
+    font-size: $size-h2;
+    color: $ink;
+  }
+
+  h3 {
+    margin-top: clamp(1.6rem, 3.6vw, 2.2rem);
+    font-size: $size-h3;
+    color: $ink;
+  }
+
+  h2 + p, h3 + p, h2 + ul, h3 + ul, h2 + pre, h3 + pre { margin-top: 0.8rem; }
+
+  ul, ol {
+    margin: 1.1rem 0 1.1rem;
+    padding-left: 1.2rem;
+    color: $ink-muted;
+  }
+
+  li + li { margin-top: 0.5rem; }
+
+  /* Only the bottom half matters when a list ends a section. */
+  > ul:last-child, > ol:last-child { margin-bottom: 0; }
+  li::marker { color: $accent; }
+
+  blockquote {
+    margin: clamp(1.5rem, 3.5vw, 2.1rem) 0;
+    padding-left: 1.2rem;
+    border-left: 2px solid $accent;
+    font-size: $size-lede;
+    font-style: italic;
+    line-height: 1.42;
+    color: $accent-deep;
+
+    cite, footer {
+      display: block;
+      margin-top: 0.6rem;
+      font-family: $font-body;
+      font-size: $size-meta;
+      font-style: normal;
+      color: $ink-faint;
+    }
+  }
+
+  figure { margin: clamp(1.6rem, 3.8vw, 2.4rem) 0; }
+
+  figcaption {
+    margin-top: 0.7rem;
+    font-family: $font-body;
+    font-size: $size-meta;
+    line-height: 1.7;
+    color: $ink-faint;
+  }
+
+  pre {
+    margin: 1.3rem 0;
+    padding: 1.1rem 1.2rem;
+    overflow-x: auto;
+    background: $surface;
+    border: 1px solid $rule;
+    border-left: 2px solid $accent;
+    border-radius: $border-radius;
+
+    code {
+      padding: 0;
+      background: none;
+      font-family: $font-code;
+      font-size: 0.86rem;
+      line-height: 1.75;
+      color: $ink;
+    }
+  }
+}
+
+.post__nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  max-width: $measure;
+  margin-top: clamp(2.4rem, 5.5vw, 3.6rem);
+  padding-top: 1.3rem;
+  border-top: 1px solid $rule;
+
+  a {
+    padding: 0.6rem 0;
+    font-family: $font-body;
+    font-size: $size-meta;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; text-underline-offset: 4px; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress span { transition: none; }
+}
+
+
+/* ── Syntax highlighting (Rouge) ───────────────────────────────────── */
+
+/* A code block already carries a surface, a rule and an accent edge from the
+   `pre` rule above; this only assigns the token colours, and keeps every one
+   of them inside the page's own palette rather than importing a theme. */
+.highlight,
+div.highlighter-rouge {
+  .c, .c1, .cm, .cs, .cd { color: $ink-faint; font-style: italic; }
+  .k, .kc, .kd, .kn, .kp, .kr, .kt { color: $accent-deep; }
+  .s, .s1, .s2, .sb, .sc, .sd, .se, .sh, .si, .sx, .sr, .ss { color: $accent-deep; }
+  .m, .mi, .mf, .mh, .mo, .il { color: $accent; }
+  .n, .na, .nb, .nc, .nd, .nf, .nn, .nt, .nv, .nx, .py { color: $ink; }
+  .o, .ow, .p { color: $ink-muted; }
+  .err { color: $surface; background: $accent-deep; }
+  .gd { color: $accent-deep; }
+  .gi { color: $accent-deep; }
+  .gh, .gu { color: $accent; font-weight: 500; }
+  .ge { font-style: italic; }
+  .gs { font-weight: 500; }
+}
+
+/* ── Print ─────────────────────────────────────────────────────────── */
+
+@media print {
+  .masthead, .grain, .skip, .progress, .post__nav, .site-footer, .sidebar { display: none !important; }
+}

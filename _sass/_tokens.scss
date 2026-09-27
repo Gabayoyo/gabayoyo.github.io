@@ -1,0 +1,73 @@
+/* ==========================================================================
+   Tokens
+   The single source for type, colour and spacing. Nothing below this file
+   hard-codes a hex value or a font stack.
+   ========================================================================== */
+
+/* Two faces, two jobs: Fraunces for headings and anything that has to carry
+   weight, Newsreader for every block of reading. Code is the only place a
+   monospace appears, and it uses a system stack rather than a third download —
+   a loaded mono face is what makes a page read as technical before a word of it
+   has been read. */
+$font-display : 'Fraunces', 'Iowan Old Style', Georgia, serif;
+$font-body    : 'Newsreader', 'Iowan Old Style', Georgia, serif;
+$font-code    : ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+/* Colour lives in the text. Every surface below is off-white or white, and the
+   depth of the page comes from type rather than from tinted panels.
+
+   The accent is a saturated forest green. Its saturation is the point: a green
+   dark enough to clear 4.5:1 on this paper also has to stay saturated, or it
+   goes muddy grey rather than reading as green at all. A warm accent is the
+   other thing to avoid — on a warm ground it agrees with the page so completely
+   that it reads as a stock palette rather than as a choice.
+
+   One family, three intensities: `$accent` is the text colour, `$accent-deep`
+   the same hue darker, `$accent-wash` a tint light enough to sit behind text.
+   Only the dark end is viable — a lighter accent of any hue drops below 4.5:1
+   on this paper, so the softness has to come from the wash. */
+$paper        : #fbfaf7;
+$paper-sunk   : #f4f2ec;
+$surface      : #ffffff;
+$ink          : #1b1d1a;
+$ink-muted    : #4b504b;
+$ink-faint    : #6d7169;
+$accent       : #276749;
+$accent-deep  : #1b4833;
+$accent-wash  : #d7f5e7;
+$rule         : #e2e0d8;
+$rule-soft    : #eeece5;
+
+/* Type scale. Kept a step apart at every width so the levels never collide.
+   The body sizes run a little above default, because the prose is the thing
+   worth reading here — but only a little, since a larger body also widens the
+   measure it sits on. */
+$size-h1    : clamp(2.05rem, 4.6vw, 3.05rem);
+$size-h2    : clamp(1.48rem, 2.7vw, 2.05rem);
+$size-h3    : clamp(1.18rem, 1.8vw, 1.4rem);
+$size-lede  : clamp(1.3rem, 2.1vw, 1.66rem);
+$size-body  : clamp(1.08rem, 1.25vw, 1.2rem);
+$size-small : clamp(0.98rem, 1.08vw, 1.06rem);
+$size-meta  : clamp(0.78rem, 0.9vw, 0.86rem);
+
+/* Layout. The container is minimal-mistakes' 1280px, which is what makes an
+   academicpages site read as a document rather than a full-bleed landing page. */
+$container    : 1280px;
+$sidebar-w    : 232px;
+$sidebar-gap  : clamp(2.5rem, 6vw, 5rem);
+/* Wide enough that the larger body size does not run to sixty-odd characters a
+   line, which is where a line stops being easy to track back from. */
+$measure      : 45rem;
+$masthead-h   : 64px;
+$band         : clamp(3rem, 7vw, 5rem);
+
+$border-radius : 3px;
+$ease          : cubic-bezier(0.16, 1, 0.3, 1);
+$transition    : 0.25s #{$ease};
+
+/* Breakpoints, matching the theme's own naming so the intent stays readable.
+   $large is the only one that matters: it is where the sidebar becomes a
+   column rather than a block above the content. */
+$small        : 600px;
+$medium-wide  : 900px;
+$large        : 925px;

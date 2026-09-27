@@ -1,0 +1,54 @@
+/* ==========================================================================
+   Print — the CV is meant to be printed or saved as a PDF, so this is a real
+   target rather than an afterthought. Reveal animations are force-reset,
+   because a printed page has no scroll to trigger them.
+   ========================================================================== */
+
+@media print {
+  @page { margin: 15mm 14mm; }
+
+  .masthead, .grain, .skip, .progress, .site-footer, .sidebar, .slot,
+  .post__nav, .slot { display: none !important; }
+
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 9.8pt;
+    line-height: 1.45;
+  }
+
+  #main {
+    display: block;
+    max-width: none;
+    padding: 0;
+  }
+
+  .page, .post { padding: 0; }
+  .page__inner, .post__head, .post__content { max-width: none; }
+
+  .page__title, .post__title { font-size: 22pt; }
+  .page__summary, .post__lead { margin-top: 0.4rem; max-width: none; color: #000; font-style: normal; }
+
+  .section { padding-bottom: 0.9rem; }
+  .section-head { padding-bottom: 0.4rem; margin-bottom: 0.7rem; border-color: #bbb; }
+  .section-num, .entry__role, .skills dt, .entry__when { color: #000; }
+
+  .entry {
+    grid-template-columns: minmax(0, 1fr) 8rem;
+    padding: 0.6rem 0;
+    break-inside: avoid;
+    border-color: #ddd;
+  }
+
+  .entry__body, .page__content p, .post__content p, .skills dd { color: #000; }
+  .skills dd { padding-bottom: 0.5rem; }
+
+  a { color: #000; text-decoration: none; }
+
+  pre, blockquote, .entry, .section-head { break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+
+  /* Without this a print triggered while a reveal is pending could emit a
+     blank region where a section should be. */
+  .js .reveal { opacity: 1 !important; transform: none !important; }
+}

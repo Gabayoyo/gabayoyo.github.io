@@ -1,0 +1,70 @@
+# Site settings
+# ----------------------------------------------------------------------------
+# The site title doubles as the masthead wordmark and the Home link.
+title: "Aaron Gabayoyo's homepage"
+title_separator: "—"
+name: "Aaron Gabayoyo"
+description: "Personal homepage for Aaron Gabayoyo"
+url: "https://gabayoyo.github.io"
+repository: "Gabayoyo/gabayoyo.github.io"
+locale: "en-GB"
+
+# Author identity. `name` appears in the masthead and as the About page's
+# heading. The sidebar's Info block reads `employer` and `degree` on one row and
+# `role` beneath; the Contact block reads the accounts. Any of them empty drops
+# its row without leaving a gap.
+author:
+  name: "Aaron Gabayoyo"
+  bio: "Final-year MInf Informatics, University of Edinburgh. Compilers, IR and testing."
+  employer: "University of Edinburgh"
+  degree: "MInf (Master of Informatics)"
+  role: "Compiler engineer"
+  email: "aarongaba05@gmail.com"
+  github: "Gabayoyo"
+  x: "agabayoyo_"        # without the @
+  linkedin: ""           # e.g. "aaron-gabayoyo"; empty hides the link
+
+# The CV is a committed PDF, served as a static file and updated by hand.
+cv_pdf: "/files/CV.pdf"
+
+# Build settings
+# ----------------------------------------------------------------------------
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  auto_ids: true
+
+permalink: /:categories/:title/
+timezone: Europe/London
+
+sass:
+  sass_dir: _sass
+  style: compressed
+
+exclude:
+  - .gitignore
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - references
+  - README.md
+
+plugins:
+  - jekyll-sitemap
+
+# Front-matter defaults, so a post file only has to carry its own content. A new
+# post needs `title`, `description`, `date` — everything below is supplied here,
+# and the site's author, sidebar and contact details all come from this file.
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      author_profile: true
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: page

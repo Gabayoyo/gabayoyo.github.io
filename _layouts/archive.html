@@ -1,0 +1,37 @@
+---
+layout: default
+---
+<article class="page archive">
+  <div class="page__inner">
+    <header class="page__head">
+      <h1 class="page__title">{{ page.title }}</h1>
+      {% if page.lede %}<p class="page__summary">{{ page.lede }}</p>{% endif %}
+    </header>
+
+    <div class="page__content">
+      {{ content }}
+
+      {% if site.posts.size == 0 %}
+        <p class="archive__empty">No posts yet.</p>
+      {% else %}
+        <section class="archive__list" aria-labelledby="archive-all">
+          <h2 id="archive-all" class="archive__list-head">
+            Writing
+            <span class="archive__count">{{ site.posts.size }} post{% if site.posts.size != 1 %}s{% endif %}</span>
+          </h2>
+
+          <!-- Newest first, and every post is listed. Pulling one out as
+               "featured" leaves this list claiming to be all of them while
+               missing one, which reads as a bug rather than as a highlight. -->
+          {% for post in site.posts %}
+            <div class="entry reveal">
+              {% include post-meta.html post=post %}
+              <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+              {% if post.description %}<p class="entry__summary">{{ post.description }}</p>{% endif %}
+            </div>
+          {% endfor %}
+        </section>
+      {% endif %}
+    </div>
+  </div>
+</article>

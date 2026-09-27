@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="{{ site.locale | default: 'en' }}">
+<head>
+  {% include head.html %}
+</head>
+<body id="top" class="{% if page.classes %}{{ page.classes }}{% endif %}">
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  {% include masthead.html %}
+
+  <div id="main" class="layout{% unless page.author_profile %} layout--no-sidebar{% endunless %}">
+    {% if page.author_profile %}{% include sidebar.html %}{% endif %}
+    {{ content }}
+  </div>
+
+  {% include footer.html %}
+  {% include scripts.html %}
+</body>
+</html>

@@ -1,0 +1,67 @@
+<script>
+(function () {
+  'use strict';
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Reveal-on-scroll, skipped entirely for reduced motion or without scripting,
+  // so every section stays readable in the plainest environment.
+  var targets = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+
+  if (!reduce && 'IntersectionObserver' in window && targets.length) {
+    var pending = targets.slice();
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('in');
+        observer.unobserve(entry.target);
+        var at = pending.indexOf(entry.target);
+        if (at !== -1) pending.splice(at, 1);
+      });
+    }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+
+    targets.forEach(function (el) { observer.observe(el); });
+
+    // An anchor jump can carry an element past the viewport without it ever
+    // intersecting; reveal those so nothing is left at zero opacity.
+    var revealSkipped = function () {
+      if (!pending.length) return;
+      pending = pending.filter(function (el) {
+        if (el.getBoundingClientRect().bottom < window.innerHeight) {
+          observer.unobserve(el); el.classList.add('in'); return false;
+        }
+        return true;
+      });
+    };
+    window.addEventListener('scroll', revealSkipped, { passive: true });
+    window.addEventListener('resize', revealSkipped, { passive: true });
+  }
+
+  var year = document.getElementById('year');
+  if (year) year.textContent = new Date().getFullYear();
+
+  // Reading progress for a post: the article's own height sets the scale.
+  var bar = document.getElementById('progress-bar');
+  var article = document.querySelector('.post__content');
+  if (!bar || !article || reduce) return;
+
+  var ticking = false;
+  var update = function () {
+    ticking = false;
+    var box = article.getBoundingClientRect();
+    var start = box.top + window.scrollY - window.innerHeight * 0.25;
+    var span = box.height + window.innerHeight * 0.35;
+    var done = (window.scrollY - start) / span;
+    bar.style.width = Math.max(0, Math.min(1, done)) * 100 + '%';
+  };
+  var onScroll = function () {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(update);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  update();
+})();
+</script>

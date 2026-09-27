@@ -1,0 +1,96 @@
+/* ==========================================================================
+   Archive — the blog index. One list, newest first.
+   ========================================================================== */
+
+.archive__empty { color: $ink-faint; font-style: italic; }
+
+.archive__list-head {
+  margin-bottom: 0.4rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid $rule;
+  font-size: $size-h2;
+}
+
+/* The heading and its count read as one line of text, so the count follows the
+   heading inline rather than being pushed to the far edge. */
+.archive__count {
+  margin-left: 0.7rem;
+  font-family: $font-body;
+  font-size: $size-meta;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: $ink-faint;
+}
+
+/* ── Entries ───────────────────────────────────────────────────────── */
+
+/* Each entry is the link target in full: the title anchor stretches over the
+   row via ::after, so the whole block is clickable and no separate "read more"
+   is needed.
+
+   The vertical padding is `padding-block`, not the `padding` shorthand. The
+   shorthand sets all four sides, so it would override any longhand override
+   below it — which is how the last entry previously ended up with different
+   spacing from the rest.
+
+   The last entry keeps the same bottom padding as every other entry and only
+   drops its rule. Zeroing that padding instead leaves the list looking cramped
+   against the footer, because between entries the gap is padding plus a border
+   and after the last one it would be nothing. */
+.entry {
+  position: relative;
+  padding-block: clamp(1.1rem, 2.4vw, 1.5rem);
+  border-bottom: 1px solid $rule-soft;
+
+  &:last-child { border-bottom: 0; }
+
+
+  h3 {
+    margin-top: 0.45rem;
+    font-size: $size-h3;
+
+    a {
+      color: $ink;
+      text-decoration: none;
+      transition: color $transition;
+
+      &::after { content: ''; position: absolute; inset: 0; }
+    }
+  }
+
+  /* Hover is a colour change on the title and nothing else — no fill. A fill
+     has to be drawn across the whole row to look deliberate, and that reads as a
+     selected row rather than as a link the pointer is over. */
+  &:hover h3 a { color: $accent; }
+
+  .entry__summary {
+    margin-top: 0.4rem;
+    max-width: $measure;
+    font-size: $size-small;
+    color: $ink-muted;
+  }
+}
+
+/* The text sits a touch inside the column edge, with the negative margin
+   cancelling the padding so the row's rule still spans the full column. */
+@media screen and (min-width: $small) {
+  .entry {
+    padding-inline: 1.1rem;
+    margin-inline: -1.1rem;
+  }
+}
+
+.entry__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 1rem;
+  font-family: $font-body;
+  font-size: $size-meta;
+  letter-spacing: 0.04em;
+  color: $ink-faint;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entry h3 a { transition: none; }
+}

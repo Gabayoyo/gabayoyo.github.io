@@ -1,0 +1,197 @@
+/* ==========================================================================
+   Sidebar — a contact rail and a post index. It scrolls with the page rather
+   than sticking: the name and summary belong to the content, and pinning the
+   column only ever cost the reader a trap for the wheel.
+   ========================================================================== */
+
+.sidebar {
+  padding-bottom: 2rem;
+
+  @media screen and (min-width: $large) {
+    padding: 2.6rem 1.4rem 2rem 0;
+    /* At this sidebar width the columns stop reading as one ragged block
+       without a hairline between them. */
+    border-right: 1px solid $rule-soft;
+  }
+}
+
+.rail + .rail { margin-top: 2.4rem; }
+
+.rail__label {
+  margin-bottom: 0.7rem;
+  font-family: $font-body;
+  font-size: $size-meta;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: $accent;
+}
+
+.rail__more {
+  display: inline-block;
+  margin-top: 0.8rem;
+  padding: 0.5rem 0; /* part of a 44px target with the list above it */
+  font-size: 0.98rem;
+  color: $ink-faint;
+  text-decoration: none;
+  transition: color $transition;
+
+  &:hover { color: $accent; text-decoration: underline; text-underline-offset: 3px; }
+}
+
+/* ── Info rail ─────────────────────────────────────────────────────── */
+
+/* Facts, not links: no hover, no underline, and set a shade back from the
+   contact rows so the rail does not read as one list of peers. */
+.info-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    /* The same rules as the contact rows, with the tighter padding and softer
+       colour carrying the difference between a fact and a link. */
+    padding: 0.5rem 0;
+    border-bottom: 1px solid $rule-soft;
+    font-size: 0.98rem;
+    line-height: 1.45;
+    color: $ink-faint;
+  }
+
+  li:first-child { border-top: 1px solid $rule-soft; }
+
+  svg {
+    width: 15px;
+    height: 15px;
+    flex: none;
+    color: $accent;
+    transform: translateY(0.15em);
+  }
+}
+
+/* The divider inside a row, matching the footer's separator. */
+.info-sep { color: $rule; }
+
+/* ── Contact rail ──────────────────────────────────────────────────── */
+
+.author__urls {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li { border-bottom: 1px solid $rule-soft; }
+  li:first-child { border-top: 1px solid $rule-soft; }
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.72rem 0; /* clears 44px */
+    font-size: 1rem;
+    line-height: 1.4;
+    color: $ink-muted;
+    text-decoration: none;
+    transition: color $transition;
+
+    &:hover { color: $accent; }
+
+    &:hover span {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+
+  svg {
+    width: 15px;
+    height: 15px;
+    flex: none;
+    color: $accent;
+  }
+}
+
+/* ── Post index ────────────────────────────────────────────────────── */
+
+/* Capped, then scrolled: past a certain number of posts a full list would make
+   the column taller than the page it sits beside. The fade at the bottom edge
+   is what says there is more below. */
+.post-list {
+  --post-list-max: 15rem;
+  position: relative;
+  max-height: var(--post-list-max);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 0;
+  padding: 0.3rem 0.1rem 0.3rem 0;
+  list-style: none;
+  border-top: 1px solid $rule-soft;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-thumb {
+    background: $rule;
+    border-radius: 3px;
+
+    &:hover { background: $ink-faint; }
+  }
+
+  li {
+    border-bottom: 1px solid $rule-soft;
+
+    &:last-child { border-bottom: 0; }
+  }
+
+  a {
+    display: block;
+    padding: 0.6rem 0;
+    text-decoration: none;
+    transition: color $transition;
+  }
+
+  /* The title leads and the date annotates, so a scan down the column reads as
+     a list of what was written before it reads as a list of when. */
+  .post-list__title {
+    display: block;
+    font-size: 0.98rem;
+    line-height: 1.35;
+    color: $ink-muted;
+    transition: color $transition;
+  }
+
+  .post-list__date {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: $size-meta;
+    letter-spacing: 0.03em;
+    color: $ink-faint;
+  }
+
+  a:hover .post-list__title { color: $accent; }
+
+  /* The post being read, so the rail answers "where am I" as well as "what
+     else is there". */
+  .is-current {
+    .post-list__title { color: $accent; font-weight: 500; }
+    .post-list__date { color: $accent; }
+  }
+
+  /* The list is a scroll region, so it takes focus for the keyboard without
+     adding a visible box to the page in the default state. */
+  &:focus-visible { outline: 2px solid $accent; outline-offset: 3px; }
+}
+
+@media (max-width: #{$large - 1px}) {
+  .sidebar {
+    max-width: 34rem;
+    padding-top: 2.2rem;
+  }
+
+  /* Stacked above the content there is nothing below to scroll past, so the cap
+     only hides posts the reader could otherwise see. */
+  .post-list { max-height: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .author__urls a, .rail__more, .post-list a, .post-list .post-list__title { transition: none; }
+}

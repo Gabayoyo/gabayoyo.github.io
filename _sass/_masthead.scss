@@ -1,0 +1,78 @@
+/* ==========================================================================
+   Masthead
+   A thin bar carrying the title and the three links, sitting above the
+   two-column body. It does not stick, which is what keeps the page feeling
+   like a document.
+   ========================================================================== */
+
+.masthead {
+  border-bottom: 1px solid $rule;
+  padding: 0 1.2rem;
+
+  @media screen and (min-width: $large) {
+    padding: 0 2rem;
+  }
+}
+
+.masthead__inner {
+  max-width: $container;
+  margin: 0 auto;
+  min-height: $masthead-h;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* The name in the display face at a size that reads as a masthead rather than a
+   label, set in sentence case. */
+.masthead__title {
+  font-family: $font-display;
+  font-size: clamp(1.02rem, 1.3vw, 1.16rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: $ink;
+  text-decoration: none;
+  padding: 0.7rem 0; /* clears 44px */
+  white-space: nowrap;
+  transition: color $transition;
+
+  &:hover { color: $accent; }
+}
+
+.masthead__nav {
+  ul {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    display: inline-block;
+    font-family: $font-body;
+    font-size: 0.98rem;
+    letter-spacing: 0.01em;
+    color: $ink-faint;
+    text-decoration: none;
+    padding: 0.85rem 0; /* clears 44px */
+    background-image: linear-gradient($accent, $accent);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1.5px;
+    transition: color $transition, background-size $transition;
+
+    &:hover { color: $accent; background-size: 100% 1.5px; }
+
+    &[aria-current="page"] {
+      color: $accent;
+      background-size: 100% 1.5px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .masthead__title, .masthead__nav a { transition: none; }
+}
