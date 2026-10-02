@@ -40,7 +40,8 @@
   margin-top: 0.8rem;
   font-size: $size-h1;
   letter-spacing: -0.028em;
-  font-variation-settings: 'opsz' 90;
+  /* Same cut as the name, so the site does not render three versions of one face. */
+  font-variation-settings: 'opsz' 24;
 }
 
 .post__lead {
@@ -73,8 +74,10 @@
 
   p { color: $ink-muted; }
 
-  /* The opening block carries the reading scale, one step above body text. */
-  > p:first-of-type {
+  /* A lead paragraph, but only when the post actually opens with one. `:first-child`
+     rather than `:first-of-type`, because the latter counts element *type*: a post
+     beginning with a heading would hand lead size to the paragraph after it. */
+  > p:first-child {
     font-size: $size-lede;
     line-height: 1.47;
     color: $ink;

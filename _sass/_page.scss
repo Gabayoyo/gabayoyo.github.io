@@ -17,11 +17,18 @@
 .page__head { margin-bottom: clamp(1.4rem, 3vw, 2rem); }
 
 /* The name, which is the page's own heading rather than a label repeated
-   beside it. */
+   beside it. The face is stated rather than inherited, because the name and the
+   blog's post titles must match and neither should depend on the base heading
+   rule staying as it is. */
 .page__title {
+  font-family: $font-display;
   font-size: $size-h1;
   letter-spacing: -0.028em;
-  font-variation-settings: 'opsz' 96;
+  /* Pinned to the same optical size the blog's titles resolve to, so the name
+     and the post titles are the same face rather than two cuts of it. Fraunces
+     varies enough across the opsz axis that the default for this size reads as
+     a different typeface. */
+  font-variation-settings: 'opsz' 24;
 }
 
 /* The one-sentence summary, directly under the name. Roman rather than italic:
